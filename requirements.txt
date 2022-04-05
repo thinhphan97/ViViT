@@ -1,5 +1,4 @@
 einops==0.4.0
 torch
-torchaudio==0.8.2
-torchmetrics==0.7.1
+torchaudio
 torchvision

@@ -208,7 +208,7 @@ class FactorisedSelfAttention(BaseClassificationModel):
         super(FactorisedSelfAttention, self).__init__(
             in_channels=in_channels,
             patch_size=(patch_h, patch_w),
-            pool="mean",
+            pool=pool,
             img_size=img_size,
         )
         h, w = pair(img_size)

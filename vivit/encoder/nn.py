@@ -47,3 +47,7 @@ class FeedForward(nn.Module):
         """
 
         return self.net(x)
+
+class FAM(nn.Module):
+    def __init__(self):
+        pass

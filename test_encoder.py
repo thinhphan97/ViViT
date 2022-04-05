@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 from vivit import *
+
 print(ENCODER_REGISTRY.get_list())
 def test_VanillaEncoder():
 
@@ -65,6 +66,47 @@ def test_ViViTEncoderModel4():
     logits = encoder(test_tensor)
     assert logits.shape == (7, 3920, 192)
     
+def test_CrosStageTransformerBlock():
+    
+    encoder = ENCODER_REGISTRY.get("CrosStageTransformerBlock")(
+        dim=192, num_heads=3, head_dim=64, p_dropout=0.0,
+    )
+
+    test_tensor = torch.randn(7, 20, 196, 192)
+    A = torch.randn(140,3,196, 196)
+    
+    logits,A = encoder(test_tensor, A)
+    assert logits.shape == (7, 20, 196, 192)
+    del encoder
+    print("pass !")
+    
+    
+    encoder = ENCODER_REGISTRY.get("CrosStageTransformerBlock")(
+        dim=192, num_heads=3, head_dim=64, p_dropout=0.0, STB = False
+    )
+    test_tensor = torch.randn(7, 20, 196, 192)
+    A = torch.randn(1372, 3, 20, 20)
+    logits,A = encoder(test_tensor, A)
+    assert logits.shape == (7, 20, 196, 192)
+    
+def test_CrosStageTransformer():
+    
+    encoder = ENCODER_REGISTRY.get("CrosStageTransformerHalf")(
+        dim=192, num_heads=3, head_dim=64, p_dropout=0.0, depth=3,
+    )
+    test_tensor = torch.randn(7, 20, 196, 192)
+    logits,Y = encoder(test_tensor)
+    assert logits.shape == (7, 3920, 192) and len(Y) == 3 and Y[1].shape == (7, 20, 196, 192)
+    del encoder
+    
+    encoder = ENCODER_REGISTRY.get("CrosStageTransformerHalf")(
+        dim=192, num_heads=3, head_dim=64, p_dropout=0.0, depth=3, STB=False
+    )
+    test_tensor = torch.randn(7, 20, 196, 192)
+    logits,Y = encoder(test_tensor)
+    assert logits.shape == (7, 3920, 192) and len(Y) == 3 and Y[1].shape == (7, 20, 196, 192)
+    del encoder
+
 if __name__ == '__main__':
     
     test_VanillaEncoder()
@@ -77,5 +119,7 @@ if __name__ == '__main__':
     print("pass !")
     test_ViViTEncoderModel4()
     print("pass !")
-    
-    
+    test_CrosStageTransformerBlock()
+    print("pass !")
+    test_CrosStageTransformer()
+    print("pass !")

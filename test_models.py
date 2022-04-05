@@ -155,5 +155,38 @@ def test_ViViT():
     
     print("pass 6")
     
+    model = MODEL_REGISTRY.get("CrossStageTransformer")(
+        num_frames=16,
+        img_size=(128, 128),
+        patch_t=8,
+        patch_h=4,
+        patch_w=4,
+        tubelet = True,
+        n_classes=10,
+        embedding_dim=124,
+        depth_STB=3,
+        depth_TTB=3,
+        num_heads=4,
+        head_dim=32,
+        p_dropout=0.0,
+        in_channels=1,
+        mlp_dim_TTB=256,
+        mlp_dim_STB=256,
+        pool = "mean"
+    )
+    test_tensor4 = torch.randn(7, 16, 1, 128, 128)
+    # target = torch.randn(7,10)
+    # loss_function = torch.nn.CrossEntropyLoss()
+    logits = model(test_tensor4)
+    # loss = loss_function(logits, target)
+    # loss.backward()
+        
+        
+    assert logits.shape == (7, 10)
+    
+    del model
+    
+    print("pass 7")
+    
 if __name__ == "__main__":
     test_ViViT()
